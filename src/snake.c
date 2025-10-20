@@ -56,7 +56,7 @@ int main(void)
 			break; // Change this later
 		}
 
-		usleep(90000); // USE THIS TEMPORARLY
+		usleep(90000); // Change this later
 		
         tigrUpdate(screen);		
     }
@@ -108,8 +108,8 @@ void spawn_apple(Tigr *screen, vector_2 *apple, vector_2 *head, vector_2 body[],
 	bool repeat;
 
 	do {
-		x = rand() % SCREEN_WIDTH;
-		y = rand() % SCREEN_HEIGHT;
+		x = 2 + rand() % (SCREEN_WIDTH - 5);
+		y = 2 + rand() % (SCREEN_HEIGHT - 5);
 
 		if (head->x == x && head->y == y) {
 			continue;
@@ -119,7 +119,6 @@ void spawn_apple(Tigr *screen, vector_2 *apple, vector_2 *head, vector_2 body[],
 		for (int i = 0; i < *score; i++) {
 			if (body[i].x == x && body[i].y == y) {
 				repeat = true;
-				printf("Here\n");
 				break;
 			}
 		}
