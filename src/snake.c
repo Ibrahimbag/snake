@@ -1,0 +1,145 @@
+#include "../libs/tigr.h"
+#include <stdlib.h>
+#include <time.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdbool.h>
+
+typedef struct vector_2 {
+	int x;
+	int y;
+} vector_2;
+
+#define SCREEN_WIDTH 32
+#define SCREEN_HEIGHT 32
+#define MAX_SCORE SCREEN_WIDTH * SCREEN_HEIGHT
+
+void get_direction(Tigr *screen, vector_2 *direction);
+void move_snake(Tigr *screen, vector_2 *head, vector_2 body[], vector_2 *direction, int score);
+bool snake_touches_apple(vector_2 *head, vector_2 *apple);
+void spawn_apple(Tigr *screen, vector_2 *apple, vector_2 *head, vector_2 body[], int *score);
+void draw_snake(Tigr *screen, vector_2 *head, vector_2 body[], int score);
+void draw_apple(Tigr *screen, vector_2 *apple);
+void draw_border(Tigr *screen);
+
+int main(void)
+{
+	vector_2 head = {0, 0};
+	vector_2 body[MAX_SCORE];
+	vector_2 direction = {0, 1};
+	vector_2 apple = {rand() % SCREEN_WIDTH, rand() % SCREEN_HEIGHT};
+	int score = 0;
+
+	srand(time(NULL));
+	Tigr *screen = tigrWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "snake", 0);
+	tigrSetPostFX(screen, 0.5, 0.5, 0, 1);
+	
+	while (!tigrClosed(screen) && !tigrKeyDown(screen, TK_ESCAPE)) {
+		tigrClear(screen, tigrRGB(0x98, 0x93, 0x25));
+
+		get_direction(screen, &direction);
+		move_snake(screen, &head, body, &direction,score);
+
+		if (snake_touches_apple(&head, &apple)) {
+			spawn_apple(screen, &apple, &head, body, &score);
+		}
+
+		draw_snake(screen, &head, body, score);
+		draw_apple(screen, &apple);
+		draw_border(screen);
+
+		usleep(90000); // USE THIS TEMPORARLY
+		
+        tigrUpdate(screen);
+    }
+    
+    tigrFree(screen);
+    return 0;
+}
+
+void get_direction(Tigr *screen, vector_2 *direction)
+{	
+	if (tigrKeyDown(screen, TK_UP) && direction->y != 1) {
+		direction->y = -1;
+		direction->x = 0; 
+	} else if (tigrKeyDown(screen, TK_DOWN) && direction->y != -1) {
+		direction->y = 1;
+		direction->x = 0;
+	} else if (tigrKeyDown(screen, TK_LEFT) && direction->x != 1) {
+		direction->y = 0;
+		direction->x = -1;
+	} else if (tigrKeyDown(screen, TK_RIGHT) && direction->x != -1) {
+		direction->y = 0;
+		direction->x = 1;
+	}
+}
+
+void move_snake(Tigr *screen, vector_2 *head, vector_2 body[], vector_2 *direction, int score)
+{
+	for (int i = score; i > 0; i--) {
+		body[i] = body[i - 1];
+	}
+	body[0] = *head;
+
+	head->x += direction->x;
+	head->y += direction->y;
+}
+
+bool snake_touches_apple(vector_2 *head, vector_2 *apple)
+{
+	if (head->x == apple->x && head->y == apple->y) {
+		return true;
+	}
+
+	return false;
+}
+
+void spawn_apple(Tigr *screen, vector_2 *apple, vector_2 *head, vector_2 body[], int *score)
+{
+	int x, y;
+	bool repeat;
+
+	do {
+		x = rand() % SCREEN_WIDTH;
+		y = rand() % SCREEN_HEIGHT;
+
+		if (head->x == x && head->y == y) {
+			continue;
+		}
+
+		repeat = false;
+		for (int i = 0; i < *score; i++) {
+			if (body[i].x == x && body[i].y == y) {
+				repeat = true;
+				printf("Here\n");
+				break;
+			}
+		}
+	} while (repeat);
+
+	apple->x = x;
+	apple->y = y;
+	(*score)++;
+}
+
+void draw_snake(Tigr *screen, vector_2 *head, vector_2 body[], int score)
+{
+	tigrPlot(screen, head->x, head->y, tigrRGB(0x34, 0x2B, 0x0E));
+
+	for (int i = 0; i < score; i++) {
+		tigrPlot(screen, body[i].x, body[i].y, tigrRGB(0x34, 0x2B, 0x0E));
+	}
+}
+
+void draw_apple(Tigr *screen, vector_2 *apple)
+{
+	tigrPlot(screen, apple->x, apple->y, tigrRGB(0x83, 0x27, 0x27));
+}
+
+void draw_border(Tigr *screen) 
+{
+	tigrLine(screen, 1, 1, SCREEN_WIDTH - 1, 1, tigrRGB(0x34, 0x2B, 0x0E));
+	tigrLine(screen, 1, 1, 1, SCREEN_HEIGHT - 1, tigrRGB(0x34, 0x2B, 0x0E));
+	tigrLine(screen, SCREEN_WIDTH - 2, 1, SCREEN_WIDTH - 2, SCREEN_HEIGHT - 1, tigrRGB(0x34, 0x2B, 0x0E));
+	tigrLine(screen, 1, SCREEN_HEIGHT - 2, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 2, tigrRGB(0x34, 0x2B, 0x0E));
+}
