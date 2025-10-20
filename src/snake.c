@@ -21,18 +21,21 @@ void spawn_apple(Tigr *screen, vector_2 *apple, vector_2 *head, vector_2 body[],
 void draw_snake(Tigr *screen, vector_2 *head, vector_2 body[], int score);
 void draw_apple(Tigr *screen, vector_2 *apple);
 void draw_border(Tigr *screen);
+bool snake_collided(Tigr *screen, vector_2 *head);
 
 int main(void)
 {
-	vector_2 head = {0, 0};
+	vector_2 head = {10, 10};
 	vector_2 body[MAX_SCORE];
 	vector_2 direction = {0, 1};
-	vector_2 apple = {rand() % SCREEN_WIDTH, rand() % SCREEN_HEIGHT};
+	vector_2 apple = {0, 0};
 	int score = 0;
 
 	srand(time(NULL));
 	Tigr *screen = tigrWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "snake", 0);
 	tigrSetPostFX(screen, 0.5, 0.5, 0, 1);
+
+	spawn_apple(screen, &apple, &head, body, &score);
 	
 	while (!tigrClosed(screen) && !tigrKeyDown(screen, TK_ESCAPE)) {
 		tigrClear(screen, tigrRGB(0x98, 0x93, 0x25));
@@ -42,15 +45,20 @@ int main(void)
 
 		if (snake_touches_apple(&head, &apple)) {
 			spawn_apple(screen, &apple, &head, body, &score);
+			score++;
 		}
 
 		draw_snake(screen, &head, body, score);
 		draw_apple(screen, &apple);
 		draw_border(screen);
 
+		if (snake_collided(screen, &head)) {
+			break; // Change this later
+		}
+
 		usleep(90000); // USE THIS TEMPORARLY
 		
-        tigrUpdate(screen);
+        tigrUpdate(screen);		
     }
     
     tigrFree(screen);
@@ -119,12 +127,11 @@ void spawn_apple(Tigr *screen, vector_2 *apple, vector_2 *head, vector_2 body[],
 
 	apple->x = x;
 	apple->y = y;
-	(*score)++;
 }
 
 void draw_snake(Tigr *screen, vector_2 *head, vector_2 body[], int score)
 {
-	tigrPlot(screen, head->x, head->y, tigrRGB(0x34, 0x2B, 0x0E));
+	tigrPlot(screen, head->x, head->y, tigrRGB(0x29, 0x22, 0x0B));
 
 	for (int i = 0; i < score; i++) {
 		tigrPlot(screen, body[i].x, body[i].y, tigrRGB(0x34, 0x2B, 0x0E));
@@ -142,4 +149,11 @@ void draw_border(Tigr *screen)
 	tigrLine(screen, 1, 1, 1, SCREEN_HEIGHT - 1, tigrRGB(0x34, 0x2B, 0x0E));
 	tigrLine(screen, SCREEN_WIDTH - 2, 1, SCREEN_WIDTH - 2, SCREEN_HEIGHT - 1, tigrRGB(0x34, 0x2B, 0x0E));
 	tigrLine(screen, 1, SCREEN_HEIGHT - 2, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 2, tigrRGB(0x34, 0x2B, 0x0E));
+}
+
+bool snake_collided(Tigr *screen, vector_2 *head)
+{
+	int x = head->x, y = head->y;
+	int index = y * screen->w + x;
+	return screen->pix[index].r == 0x34 ? true : false;
 }
