@@ -1,7 +1,6 @@
 #include "../libs/tigr.h"
 #include <stdlib.h>
 #include <time.h>
-#include <unistd.h>
 #include <stdio.h>
 #include <stdbool.h>
 
@@ -12,7 +11,7 @@ typedef struct vector_2 {
 
 #define SCREEN_WIDTH 32
 #define SCREEN_HEIGHT 32
-#define MAX_SCORE SCREEN_WIDTH * SCREEN_HEIGHT
+#define MAX_SCORE (SCREEN_WIDTH * SCREEN_HEIGHT)
 
 void get_direction(Tigr *screen, vector_2 *direction);
 void move_snake(Tigr *screen, vector_2 *head, vector_2 body[], vector_2 *direction, int score);
@@ -56,7 +55,8 @@ int main(void)
 			break; // Change this later
 		}
 
-		usleep(90000); // Change this later
+		struct timespec remaining, request = {0, 70000000};
+		nanosleep(&request, &remaining);
 		
         tigrUpdate(screen);		
     }
