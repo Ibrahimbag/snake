@@ -1,9 +1,9 @@
 CC := gcc
-OBJ := libs/tigr.o src/snake.o
+OBJ := src/snake.o libs/tigr.o libs/miniaudio.o
 BIN := snake
 
 WIN_LIBS := -lopengl32 -lgdi32
-LINUX_LIBS := -lGL -lX11
+LINUX_LIBS := -lGL -lX11 -lm -lpthread
 
 UNAME_S := $(shell uname -s)
 

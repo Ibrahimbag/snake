@@ -1,8 +1,10 @@
+#include "../libs/miniaudio.h"
 #include "../libs/tigr.h"
-#include <stdlib.h>
-#include <time.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdbool.h>
+#include <time.h>
+#include <unistd.h>
 
 typedef struct vector_2 {
 	int x;
@@ -30,6 +32,14 @@ int main(void)
 	vector_2 apple = {0, 0};
 	int score = 0;
 
+	ma_result result;
+	ma_engine engine;
+
+	result = ma_engine_init(NULL, &engine);
+	if (result != MA_SUCCESS) {
+		fprintf(stderr, "Failed to initialize sound engine\n");
+	}
+
 	srand(time(NULL));
 	Tigr *screen = tigrWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "snake", 0);
 	tigrSetPostFX(screen, 0.5, 0.5, 0, 1);
@@ -44,6 +54,11 @@ int main(void)
 
 		if (snake_touches_apple(&head, &apple)) {
 			spawn_apple(screen, &apple, &head, body, &score);
+
+			if (result == MA_SUCCESS) {
+				ma_engine_play_sound(&engine, "sounds/score.mp3", NULL);
+			}
+
 			score++;
 		}
 
@@ -52,6 +67,11 @@ int main(void)
 		draw_border(screen);
 
 		if (snake_collided(screen, &head)) {
+			if (result == MA_SUCCESS) {
+				ma_engine_play_sound(&engine, "sounds/crash.mp3", NULL);
+				sleep(2);
+			}
+			
 			break; // Change this later
 		}
 
@@ -61,7 +81,9 @@ int main(void)
         tigrUpdate(screen);		
     }
     
+	ma_engine_uninit(&engine);
     tigrFree(screen);
+
     return 0;
 }
 
