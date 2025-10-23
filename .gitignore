@@ -1,6 +1,16 @@
+# Ignore all files without file extension except makefile (Binary file without any file extensions)
+*
+!/**/
+!*.*
+!Makefile
+
+# Ignore binary files generated during compilation
 *.exe
+*.out
 src/*.o
 libs/*.o
 
 .vscode/
+
+# Ignore codes that I don't want to commit to git
 sandbox/
