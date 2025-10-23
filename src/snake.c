@@ -133,11 +133,13 @@ void spawn_apple(Tigr *screen, vector_2 *apple, vector_2 *head, vector_2 body[],
 		x = 2 + rand() % (SCREEN_WIDTH - 5);
 		y = 2 + rand() % (SCREEN_HEIGHT - 5);
 
+		repeat = false;
+
 		if (head->x == x && head->y == y) {
+			repeat = true;
 			continue;
 		}
 
-		repeat = false;
 		for (int i = 0; i < *score; i++) {
 			if (body[i].x == x && body[i].y == y) {
 				repeat = true;
