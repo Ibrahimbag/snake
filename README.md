@@ -32,6 +32,9 @@ make
 
 #### WSL
 
+> [!NOTE]
+> Sound does not work in WSL
+
 Another way to do other than MSYS2 is WSL.\
 Install WSL from here: <https://learn.microsoft.com/en-us/windows/wsl/install>
 
