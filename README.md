@@ -71,6 +71,8 @@ Use <kbd>arrow</kbd> keys for moving, <kbd>ESC</kbd> button to close the game.
 
 ## Sounds
 
+For sound output, [miniaudio](https://github.com/mackron/miniaudio) library is used.
+
 score.mp3 by [chieuk](https://pixabay.com/users/chieuk-46505609/) <https://pixabay.com/sound-effects/coin-257878/>
 
 crash.mp3: <https://sfxengine.com/sound-effects/collisions>
