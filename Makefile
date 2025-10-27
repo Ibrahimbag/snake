@@ -13,8 +13,8 @@ else ifeq ($(UNAME_S),Linux)
     LIBS := $(LINUX_LIBS)
 else
 	$(error Unsupported OS detected: $(UNAME_S). \
-		    Only Linux and Windows are supported. \
-			For MacOS, compile it yourself with -framework OpenGL and -framework Cocoa linkers)
+		Only Linux and Windows are supported. \
+		For MacOS, compile it yourself with -framework OpenGL and -framework Cocoa linkers)
 endif
 
 %.o: %.c
@@ -24,6 +24,10 @@ $(BIN): $(OBJ)
 	$(CC) -o $@ $(OBJ) $(LIBS)
 
 clean:
+ifeq ($(OS),Windows_NT)
 	rm *.exe
 	rm src/*.o
 	rm libs/*.o
+else ifeq ($(UNAME_S),Linux)
+	rm -f $(BIN) src/*.o libs/*.o
+endif
