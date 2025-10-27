@@ -3,7 +3,7 @@ OBJ := src/snake.o libs/tigr.o libs/miniaudio.o
 BIN := snake
 
 WIN_LIBS := -lopengl32 -lgdi32
-LINUX_LIBS := -lGL -lX11 -lm -lpthread
+LINUX_LIBS := -lGL -lX11 -lm -lpthread -ldl
 
 UNAME_S := $(shell uname -s)
 
